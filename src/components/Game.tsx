@@ -732,11 +732,11 @@ const Game: React.FC<GameProps> = ({ countries }) => {
 
 
   return (
-    <div className="flex flex-col lg:flex-row gap-0 h-auto lg:h-[600px] relative">
-      {/* Info button - top right */}
+    <div className="flex flex-col lg:flex-row gap-0 min-h-screen lg:h-[600px] relative">
+      {/* Info button - responsive positioning */}
       <button
         onClick={() => setShowInfoModal(true)}
-        className="absolute top-2 right-2 lg:top-4 lg:right-4 z-50 w-8 h-8 rounded-full bg-primary/20 hover:bg-primary/30 text-foreground border border-border flex items-center justify-center transition-colors"
+        className="lg:absolute lg:top-4 lg:right-4 lg:z-50 self-end m-4 lg:m-0 w-8 h-8 rounded-full bg-primary/20 hover:bg-primary/30 text-foreground border border-border flex items-center justify-center transition-colors"
         title="Data sources"
       >
         <span className="text-sm font-bold">ℹ️</span>
@@ -941,7 +941,7 @@ const Game: React.FC<GameProps> = ({ countries }) => {
       </div>
 
       {/* Center panel - Map */}
-      <div className="flex-1 relative overflow-hidden h-[400px] lg:h-auto">
+      <div className="flex-1 relative overflow-hidden min-h-[500px] lg:h-auto">
         <DeckGL
           initialViewState={INITIAL_VIEW_STATE}
           viewState={viewState}
