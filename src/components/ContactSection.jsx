@@ -69,7 +69,7 @@ export const ContactSection = () => {
                                     </svg>
 
                                 </a>
-                                <a href="https://www.instagram.com/jd_francoc/" target="_blank">
+                                <a href="https://www.instagram.com/jd.francoc/" target="_blank">
                                     <Instagram />
                                 </a>
                                 <a href="https://www.linkedin.com/in/jdfranco/" target="_blank">

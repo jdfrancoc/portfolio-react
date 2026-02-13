@@ -163,6 +163,26 @@ body {
 }
 
 
+@utility bg-success {
+  @apply bg-green-500;
+}
+
+@utility bg-success/10 {
+  @apply bg-green-500/10;
+}
+
+@utility border-success {
+  @apply border-green-500;
+}
+
+@utility text-success {
+  @apply text-green-600 dark:text-green-400;
+}
+
+@utility bg-warning/20 {
+  @apply bg-yellow-500/20;
+}
+
 
 
 

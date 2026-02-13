@@ -2,24 +2,33 @@ import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 
 const skills = [
-    {name: "HTML/CSS", level: 95, category: "frontend"},
-    {name: "Javascript", level: 95, category: "frontend"},
-    {name: "React", level: 75, category: "frontend"},
-    {name: "TypeScript", level: 75, category: "frontend"},
-    {name: "Tailwind CSS", level: 70, category: "frontend"},
-    {name: "Mapbox", level: 85, category: "frontend"},
-    {name: "jQuery", level: 90, category: "frontend"},
-    {name: "Python", level: 80, category: "backend"},
-    {name: "Flask", level: 75, category: "backend"},
-    {name: "FastAPI", level: 65, category: "backend"},
-    {name: "PostgreSQL", level: 70, category: "backend"},
-    {name: "Git/GitHub", level: 65, category: "tools"},
-    {name: "Docker", level: 55, category: "tools"},
-    {name: "Figma", level: 85, category: "tools"},
-    {name: "VS Code", level: 95, category: "tools"},
-    {name: "ArcGIS / QGIS", level: 90, category: "tools"},
-    {name: "Tableau", level: 85, category: "tools"},
-]
+  // Frontend
+  { name: "HTML/CSS", level: 95, category: "frontend" },
+  { name: "JavaScript (ES6+)", level: 90, category: "frontend" },
+  { name: "React", level: 85, category: "frontend" },
+  { name: "TypeScript", level: 85, category: "frontend" },
+  { name: "Tailwind CSS", level: 75, category: "frontend" },
+  { name: "Streamlit", level: 70, category: "frontend" },
+  { name: "Mapbox GL JS", level: 85, category: "frontend" },
+  { name: "deck.gl", level: 70, category: "frontend" },
+
+  // Backend
+  { name: "Python", level: 85, category: "backend" },
+  { name: "Flask", level: 80, category: "backend" },
+  { name: "FastAPI", level: 70, category: "backend" },
+  { name: "PostgreSQL", level: 75, category: "backend" },
+  { name: "PostGIS", level: 70, category: "backend" },
+
+  // Tools & Platforms
+  { name: "Git / GitHub", level: 80, category: "tools" },
+  { name: "GitLab / Azure DevOps", level: 75, category: "tools" },
+  { name: "Databricks", level: 70, category: "tools" },
+  { name: "Tableau", level: 85, category: "tools" },
+  { name: "ArcGIS / QGIS", level: 90, category: "tools" },
+  { name: "Figma", level: 85, category: "tools" },
+  { name: "VS Code", level: 95, category: "tools" },
+];
+
 
 const categories = ["all", "frontend", "backend", "tools"]
 
