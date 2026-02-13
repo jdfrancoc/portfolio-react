@@ -295,7 +295,7 @@ const CountryFacts: React.FC<{ country: Country }> = ({ country }) => {
     : null;
 
   return (
-    <div className="w-80 p-4 overflow-y-auto bg-card border-l-2 border-border">
+    <div className="w-full lg:w-80 p-4 overflow-y-auto bg-card lg:border-l-2 border-t-2 lg:border-t-0 border-border max-h-[500px] lg:max-h-none">
       <h2 className="text-2xl font-bold text-foreground">Facts about</h2>
       <h2 className="text-2xl font-bold mb-4 text-foreground">
         {country.name.common}
@@ -732,11 +732,11 @@ const Game: React.FC<GameProps> = ({ countries }) => {
 
 
   return (
-    <div className="flex gap-0 h-[600px] relative">
+    <div className="flex flex-col lg:flex-row gap-0 h-auto lg:h-[600px] relative">
       {/* Info button - top right */}
       <button
         onClick={() => setShowInfoModal(true)}
-        className="absolute top-4 right-4 z-50 w-8 h-8 rounded-full bg-primary/20 hover:bg-primary/30 text-foreground border border-border flex items-center justify-center transition-colors"
+        className="absolute top-2 right-2 lg:top-4 lg:right-4 z-50 w-8 h-8 rounded-full bg-primary/20 hover:bg-primary/30 text-foreground border border-border flex items-center justify-center transition-colors"
         title="Data sources"
       >
         <span className="text-sm font-bold">ℹ️</span>
@@ -745,11 +745,11 @@ const Game: React.FC<GameProps> = ({ countries }) => {
       {/* Info Modal */}
       {showInfoModal && (
         <div 
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]"
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4"
           onClick={() => setShowInfoModal(false)}
         >
           <div 
-            className="bg-background border-2 border-border rounded-lg p-6 max-w-md mx-4 shadow-xl"
+            className="bg-background border-2 border-border rounded-lg p-4 lg:p-6 max-w-md w-full mx-4 shadow-xl max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-start mb-4">
@@ -820,7 +820,7 @@ const Game: React.FC<GameProps> = ({ countries }) => {
       )}
 
       {/* Left panel - Game controls */}
-      <div className="w-[350px] p-4 flex flex-col gap-4 border-r-2 border-border">
+      <div className="w-full lg:w-[350px] p-4 flex flex-col gap-4 lg:border-r-2 border-b-2 lg:border-b-0 border-border">
         {/* Score counter */}
         <div className="p-4 rounded-lg text-center border-2 border-primary">
           <div className="text-primary text-sm font-bold">
@@ -865,7 +865,7 @@ const Game: React.FC<GameProps> = ({ countries }) => {
 
                 <div>
                     <label className="block mb-2 font-bold text-foreground">
-                        Begin typing and select your answer:
+                        Type your answer:
                     </label>
                     <CountrySearchInput
                         key={round.prompt.description} // Force remount on new round
@@ -897,10 +897,10 @@ const Game: React.FC<GameProps> = ({ countries }) => {
                         onClick={startNewRound}
                         disabled={round.result === 'idle'}
                         className={`
-                        px-3 py-1 font-bold border rounded-md transition-colors
+                        px-3 py-1 text-xs font-medium border rounded-full transition-colors
                         ${round.result === 'idle' 
                             ? 'bg-muted text-muted-foreground cursor-not-allowed opacity-50' 
-                            : 'cosmic-button'
+                            : 'bg-primary/20 text-foreground hover:bg-primary/30'
                         }
                         `}
                     >
@@ -941,7 +941,7 @@ const Game: React.FC<GameProps> = ({ countries }) => {
       </div>
 
       {/* Center panel - Map */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className="flex-1 relative overflow-hidden h-[400px] lg:h-auto">
         <DeckGL
           initialViewState={INITIAL_VIEW_STATE}
           viewState={viewState}

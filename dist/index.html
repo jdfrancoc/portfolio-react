@@ -5,8 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JD Franco</title>
-    <script type="module" crossorigin src="/assets/index-ZXjgWU0X.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-zU9E3rut.css">
+    <script>
+      // Check if we were redirected from 404.html
+      (function() {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.href) {
+          history.replaceState(null, null, redirect);
+        }
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-Odxj6mmr.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-awz_kzPW.css">
   </head>
   <body>
     <div id="root"></div>
