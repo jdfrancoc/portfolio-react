@@ -732,7 +732,7 @@ const Game: React.FC<GameProps> = ({ countries }) => {
 
 
   return (
-    <div className="flex flex-col lg:flex-row gap-0 min-h-screen lg:h-[600px] relative">
+    <div className="flex flex-col lg:flex-row gap-0 min-h-screen lg:min-h-0 lg:h-[calc(100vh-300px)] relative">
       {/* Info button - responsive positioning */}
       <button
         onClick={() => setShowInfoModal(true)}
@@ -865,7 +865,7 @@ const Game: React.FC<GameProps> = ({ countries }) => {
 
                 <div>
                     <label className="block mb-2 font-bold text-foreground">
-                        Begin typing and select your answer:
+                        Type your answer:
                     </label>
                     <CountrySearchInput
                         key={round.prompt.description} // Force remount on new round
@@ -897,10 +897,10 @@ const Game: React.FC<GameProps> = ({ countries }) => {
                         onClick={startNewRound}
                         disabled={round.result === 'idle'}
                         className={`
-                        px-3 py-1 font-bold border rounded-md transition-colors
+                        px-3 py-1 text-xs font-medium border rounded-full transition-colors
                         ${round.result === 'idle' 
                             ? 'bg-muted text-muted-foreground cursor-not-allowed opacity-50' 
-                            : 'cosmic-button'
+                            : 'bg-primary/20 text-foreground hover:bg-primary/30'
                         }
                         `}
                     >
@@ -941,7 +941,7 @@ const Game: React.FC<GameProps> = ({ countries }) => {
       </div>
 
       {/* Center panel - Map */}
-      <div className="flex-1 relative overflow-hidden min-h-[500px] lg:h-auto">
+      <div className="flex-1 relative overflow-hidden min-h-[500px] lg:min-h-0 lg:h-full">
         <DeckGL
           initialViewState={INITIAL_VIEW_STATE}
           viewState={viewState}
