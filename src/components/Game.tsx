@@ -724,7 +724,7 @@ const Game: React.FC<GameProps> = ({ countries }) => {
         getLineWidth: 5,
         lineWidthMinPixels: 3,
         pickable: true,
-        opacity: 0.8,
+        opacity: 0.2,
       })
     ];
   }, [countryBorder]);
