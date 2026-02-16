@@ -865,7 +865,7 @@ const Game: React.FC<GameProps> = ({ countries }) => {
 
                 <div>
                     <label className="block mb-2 font-bold text-foreground">
-                        Type your answer:
+                        Begin Typing and select your answer:
                     </label>
                     <CountrySearchInput
                         key={round.prompt.description} // Force remount on new round
@@ -897,10 +897,10 @@ const Game: React.FC<GameProps> = ({ countries }) => {
                         onClick={startNewRound}
                         disabled={round.result === 'idle'}
                         className={`
-                        px-3 py-1 text-xs font-medium border rounded-full transition-colors
+                        px-3 py-1 font-bold border rounded-md transition-colors
                         ${round.result === 'idle' 
                             ? 'bg-muted text-muted-foreground cursor-not-allowed opacity-50' 
-                            : 'bg-primary/20 text-foreground hover:bg-primary/30'
+                            : 'cosmic-button'
                         }
                         `}
                     >
