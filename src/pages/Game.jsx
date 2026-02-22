@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Game from "@/components/Game";
-import GeoDetective from "@/components/GeoDetective";
+import GeoDetective from "@/components/Geodetective";
 import { Layout } from "@/components/Layout";
 
 const TABS = [
