@@ -20,7 +20,10 @@ export function GamePage() {
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState("elimination");
+  const [activeTab, setActiveTab] = useState(() => {
+    const hash = window.location.hash.replace("#", "");
+    return TABS.some((t) => t.id === hash) ? hash : TABS[0].id;
+  });
 
   useEffect(() => {
     const fetchIndependent = fetch("https://restcountries.com/v3.1/independent?status=true")
@@ -30,7 +33,6 @@ export function GamePage() {
 
     Promise.all([fetchIndependent, fetchNonIndependent])
       .then(([independent, nonIndependent]) => {
-        // Union by cca3 — independent takes priority if duplicate
         const seen = new Set();
         const merged = [...independent, ...nonIndependent].filter((c) => {
           if (seen.has(c.cca3)) return false;
@@ -46,23 +48,26 @@ export function GamePage() {
       });
   }, []);
 
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    window.location.hash = tabId;
+  };
+
   const activeTabData = TABS.find((t) => t.id === activeTab);
 
   return (
     <Layout>
       <div className="container mx-auto my-12 px-4 py-8 bg-background text-foreground overflow-x-hidden">
-        {/* Header */}
         <h1 className="text-3xl font-bold mb-1 text-primary">Country Games</h1>
         <p className="mb-5 text-muted-foreground text-sm">
           {activeTabData?.description}
         </p>
 
-        {/* Tabs */}
         <div className="flex gap-2 mb-6 border-b-2 border-border">
           {TABS.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={`
                 px-4 py-2 text-sm font-bold rounded-t-md border-2 border-b-0 transition-all
                 ${
@@ -77,7 +82,6 @@ export function GamePage() {
           ))}
         </div>
 
-        {/* Content */}
         {loading && <p className="text-muted-foreground">Loading countries…</p>}
         {error && <p className="text-red-500">Error: {error}</p>}
 

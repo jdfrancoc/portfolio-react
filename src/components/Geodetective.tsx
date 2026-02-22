@@ -86,7 +86,7 @@ const GEOJSON_SOURCES = [
 //
 // Order:  population → landlocked → neighbours → capital letter →
 //         currency → language → continent → region → first letter
-function buildClues(country: Country, allCountries: Country[]): Clue[] {
+function buildClues(country: Country, allCountries: Country[], difficulty: 'easy' | 'hard'): Clue[] {
   const clues: Clue[] = [];
 
   // 1. Population band — very vague, many countries share each band
@@ -160,23 +160,23 @@ function buildClues(country: Country, allCountries: Country[]): Clue[] {
     });
   }
 
-  // 7. Continent — eliminates ~80% of the world in one go
-  if (country.continents?.length) {
-    clues.push({
-      type: 'continent',
-      label: 'Continent',
-      value: country.continents.join(' / '),
-      icon: '🌍',
-    });
-  }
-
-  // 8. Region / subregion — very strong; narrows to ~5–20 countries
+  // 7. Region / subregion — very strong; narrows to ~5–20 countries
   if (country.region) {
     clues.push({
       type: 'region',
       label: 'Region',
       value: country.subregion || country.region,
       icon: '🗺️',
+    });
+  }
+
+  // 8. Continent — eliminates ~80% of the world in one go
+  if (country.continents?.length) {
+    clues.push({
+      type: 'continent',
+      label: 'Continent',
+      value: country.continents.join(' / '),
+      icon: '🌍',
     });
   }
 
@@ -188,7 +188,8 @@ function buildClues(country: Country, allCountries: Country[]): Clue[] {
     icon: '🔤',
   });
 
-  return clues;
+  // Easy mode: flip the order so the most revealing clues come first
+  return difficulty === 'easy' ? [...clues].reverse() : clues;
 }
 
 // ─── Colour helpers ───────────────────────────────────────────────────────────
@@ -215,7 +216,7 @@ const POINTS_PER_ROUND = 10;
 
 const GeoDetective: React.FC<GeoDetectiveProps> = ({ countries }) => {
   const { isDarkMode } = useTheme();
-
+  const [showInfoModal, setShowInfoModal] = useState(false);
   const mapStyle = isDarkMode
     ? 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
     : 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
@@ -226,6 +227,7 @@ const GeoDetective: React.FC<GeoDetectiveProps> = ({ countries }) => {
   const [geoError, setGeoError] = useState<string | null>(null);
 
   // Game state
+  const [difficulty, setDifficulty] = useState<'easy' | 'hard' | null>(null);
   const [secretCountry, setSecretCountry] = useState<Country | null>(null);
   const [clues, setClues] = useState<Clue[]>([]);
   const [revealedCount, setRevealedCount] = useState(0);
@@ -328,6 +330,7 @@ const GeoDetective: React.FC<GeoDetectiveProps> = ({ countries }) => {
   // ── Reset everything for a brand-new game ────────────────────────────────
 
   const resetGame = useCallback(() => {
+    setDifficulty(null);
     setScore(0);
     setCurrentRound(0);
     setRoundScores([]);
@@ -343,11 +346,12 @@ const GeoDetective: React.FC<GeoDetectiveProps> = ({ countries }) => {
 
   // ── Start the next round ──────────────────────────────────────────────────
 
-  const startGame = useCallback(() => {
+  const startGame = useCallback((diff?: 'easy' | 'hard') => {
     if (!countries.length) return;
+    const activeDifficulty = diff ?? difficulty ?? 'hard';
     const eligible = countries.filter((c) => c.latlng && c.latlng.length === 2);
     const picked = eligible[Math.floor(Math.random() * eligible.length)];
-    const generatedClues = buildClues(picked, countries);
+    const generatedClues = buildClues(picked, countries, activeDifficulty);
 
     setCurrentRound((r) => r + 1);
     setSecretCountry(picked);
@@ -537,6 +541,90 @@ const GeoDetective: React.FC<GeoDetectiveProps> = ({ countries }) => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-0 min-h-screen lg:min-h-0 lg:h-[calc(100vh-300px)] relative">
+      <button
+        onClick={() => setShowInfoModal(true)}
+        className="lg:absolute lg:top-4 lg:right-4 lg:z-50 self-end m-4 lg:m-0 w-8 h-8 rounded-full bg-primary/20 hover:bg-primary/30 text-foreground border border-border flex items-center justify-center transition-colors"
+        title="Data sources"
+      >
+        <span className="text-sm font-bold">ℹ️</span>
+      </button>
+
+      {/* Info Modal */}
+      {showInfoModal && (
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4"
+          onClick={() => setShowInfoModal(false)}
+        >
+          <div 
+            className="bg-background border-2 border-border rounded-lg p-4 lg:p-6 max-w-md w-full mx-4 shadow-xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="text-xl font-bold text-foreground">Data Sources</h2>
+              <button
+                onClick={() => setShowInfoModal(false)}
+                className="text-muted-foreground hover:text-foreground text-2xl leading-none"
+              >
+                ×
+              </button>
+            </div>
+            <div className="space-y-4 text-foreground">
+              <div>
+                <h3 className="font-semibold mb-1">Country Data</h3>
+                <p className="text-sm text-muted-foreground">
+                  Country information including names, continents, languages, and capitals from{' '}
+                  <a 
+                    href="https://restcountries.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    REST Countries API
+                  </a>
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-1">Geographic Borders</h3>
+                <p className="text-sm text-muted-foreground">
+                  Country border data from{' '}
+                  <a 
+                    href="https://www.naturalearthdata.com/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Natural Earth Data
+                  </a>
+                  {' '}and{' '}
+                  <a 
+                    href="https://github.com/datasets/geo-countries" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    geo-countries
+                  </a>
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-1">Map Tiles</h3>
+                <p className="text-sm text-muted-foreground">
+                  Base map provided by{' '}
+                  <a 
+                    href="https://www.openstreetmap.org/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    OpenStreetMap
+                  </a>
+                  {' '}contributors
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Left panel ───────────────────────────────────────────────────── */}
       <div className="w-full lg:w-[340px] p-4 flex flex-col gap-3 lg:border-r-2 border-b-2 lg:border-b-0 border-border overflow-y-auto">
@@ -617,13 +705,35 @@ const GeoDetective: React.FC<GeoDetectiveProps> = ({ countries }) => {
             {geoError && (
               <p className="text-red-500 text-sm">Map error: {geoError}</p>
             )}
-            <button
-              className="cosmic-button w-full"
-              onClick={startGame}
-              disabled={geoLoading || !!geoError || !countries.length}
-            >
-              Start Game
-            </button>
+
+            {/* Difficulty picker */}
+            {!geoLoading && !geoError && countries.length > 0 && (
+              <>
+                <p className="text-sm font-bold text-foreground text-center">Choose difficulty</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    className="flex flex-col items-center gap-1 p-3 rounded-lg border-2 border-success/50 bg-success/5 hover:bg-success/15 hover:border-success transition-colors text-left"
+                    onClick={() => { setDifficulty('easy'); startGame('easy'); }}
+                  >
+                    <span className="text-xl">🌍</span>
+                    <span className="font-bold text-foreground text-sm">Easy</span>
+                    <span className="text-xs text-muted-foreground text-center leading-tight">
+                      Starts with region &amp; continent clues
+                    </span>
+                  </button>
+                  <button
+                    className="flex flex-col items-center gap-1 p-3 rounded-lg border-2 border-destructive/50 bg-destructive/5 hover:bg-destructive/15 hover:border-destructive transition-colors text-left"
+                    onClick={() => { setDifficulty('hard'); startGame('hard'); }}
+                  >
+                    <span className="text-xl">🧠</span>
+                    <span className="font-bold text-foreground text-sm">Hard</span>
+                    <span className="text-xs text-muted-foreground text-center leading-tight">
+                      Starts with population &amp; vague clues
+                    </span>
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         )}
 
@@ -738,7 +848,7 @@ const GeoDetective: React.FC<GeoDetectiveProps> = ({ countries }) => {
                 </button>
               )}
               {(gameStatus === 'won' || gameStatus === 'lost') && (
-                <button className="cosmic-button flex-1" onClick={startGame}>
+                <button className="cosmic-button flex-1" onClick={() => startGame(difficulty ?? 'hard')}>
                   {currentRound < TOTAL_ROUNDS ? `Round ${currentRound + 1} →` : 'See Results'}
                 </button>
               )}
